@@ -7,7 +7,7 @@ export const persistPlan = async (userId: number, assessmentId: number, plan: Ge
     user_id: userId,
     assessment_id: assessmentId,
     focus_pillar: plan.primary_focus_pillar,
-    duration_days: plan.duration_days,
+    duration_days: ((plan.duration_days ?? 1) ?? 1),
     daily_tasks: plan.daily_tasks,
   });
 };

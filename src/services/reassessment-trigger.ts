@@ -13,7 +13,7 @@ export const checkHopeReassessment = async (planId: number, userId: number): Pro
   const daysElapsed = Math.floor((now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
 
   const isIntervalReached = daysElapsed >= 3 && daysElapsed <= 7;
-  const isEngagementSufficient = plan.current_day > 0;
+  const isEngagementSufficient = ((plan.current_day ?? 0) ?? 0) > 0;
 
   if (isIntervalReached && isEngagementSufficient) {
     return { triggerReassessment: true, reason: "Hope AI: Scheduled adaptive re-evaluation." };

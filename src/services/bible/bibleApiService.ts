@@ -25,7 +25,7 @@ export const fetchVerseText = async (reference: string): Promise<{ reference: st
   try {
     const res = await fetch(`https://bible-api.com/${encodeURIComponent(reference)}`);
     if (!res.ok) throw new Error(`Bible API error: ${res.status}`);
-    const data = await res.json();
+    const data: any = await res.json();
     return { reference: data.reference ?? reference, text: data.text ?? "Verse text unavailable." };
   } catch {
     return { reference, text: "Unable to load verse." };
