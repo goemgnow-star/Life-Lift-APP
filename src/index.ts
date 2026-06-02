@@ -4,6 +4,7 @@ import path from 'path';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import { appRouter } from './trpc/routers/_app';
 import { createContext } from './trpc/context';
+import authRouter from './routes/auth';
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
+app.use('/api', authRouter);
 app.use('/trpc', createExpressMiddleware({ router: appRouter, createContext }));
 
 app.get('/health', (_req, res) => {
