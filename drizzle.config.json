@@ -1,0 +1,8 @@
+{
+  "schema": "./src/database/schema/*.ts",
+  "out": "./drizzle",
+  "dialect": "postgresql",
+  "dbCredentials": {
+    "url": "postgresql://lifelift_db_user:MfD80RgSUkscVPkn8LDmREbPAxmonVwX@dpg-d8f80b3eo5us73bjald0-a.oregon-postgres.render.com/lifelift_db?sslmode=require"
+  }
+}
