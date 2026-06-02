@@ -1,0 +1,14 @@
+{
+  "name": "LifeLift",
+  "short_name": "LifeLift",
+  "description": "One step at a time. You are not alone.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F7F3EB",
+  "theme_color": "#1B6B6B",
+  "icons": [
+    { "src": "/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
