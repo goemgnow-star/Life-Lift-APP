@@ -16,6 +16,7 @@
     "dotenv": "^16.4.0",
     "drizzle-orm": "^0.30.10",
     "express": "^4.21.0",
+    "google-auth-library": "^10.6.2",
     "groq-sdk": "^0.8.0",
     "jsonwebtoken": "^9.0.0",
     "pg": "^8.13.0",
