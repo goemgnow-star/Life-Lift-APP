@@ -1,73 +1,66 @@
 import React, { useState, useEffect } from 'react';
 
-interface Habit {
-  id: number;
-  name: string;
-  completedToday: boolean;
-}
+interface Habit { id: number; name: string; description: string | null; completedToday: boolean; }
 
 const Habits: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [newName, setNewName] = useState('');
+  const [name, setName] = useState('');
+  const [desc, setDesc] = useState('');
+  const token = localStorage.getItem('token');
 
-  const fetchHabits = async () => {
-    const res = await fetch('/trpc/habits.list', {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-    });
-    const data = await res.json();
-    setHabits(data?.result?.data?.habits || []);
+  const fetchHabits = () => {
+    fetch('/trpc/habits.list', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json()).then(d => setHabits(d?.result?.data?.habits || [])).catch(() => {});
   };
 
   useEffect(() => { fetchHabits(); }, []);
 
-  const addHabit = async () => {
-    if (!newName.trim()) return;
+  const add = async () => {
+    if (!name.trim()) return;
     await fetch('/trpc/habits.create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
-      body: JSON.stringify({ name: newName }),
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ name, description: desc }),
     });
-    setNewName('');
-    fetchHabits();
+    setName(''); setDesc(''); fetchHabits();
   };
 
-  const toggleHabit = async (id: number, completed: boolean) => {
+  const toggle = async (id: number, completed: boolean) => {
     if (completed) {
       await fetch('/trpc/habits.complete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ habit_id: id }),
       });
     }
     fetchHabits();
   };
 
-  const deleteHabit = async (id: number) => {
+  const remove = async (id: number) => {
     await fetch('/trpc/habits.delete', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ habit_id: id }),
     });
     fetchHabits();
   };
 
   return (
-    <div className="max-w-md mx-auto">
+    <div className="max-w-md mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold text-[#1a2a2a] font-serif mb-6">Habits</h1>
-      <div className="flex gap-2 mb-4">
-        <input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="New habit..."
-          className="flex-1 bg-white rounded-xl px-4 py-3 text-sm border border-[#ede8df] focus:outline-none focus:ring-2 focus:ring-[#1B6B6B]" />
-        <button onClick={addHabit} className="bg-[#1B6B6B] text-white rounded-xl px-4 py-3 text-sm font-semibold">Add</button>
+      <div className="bg-white rounded-2xl p-4 mb-4 shadow-sm border border-[#ede8df] space-y-3">
+        <input value={name} onChange={e => setName(e.target.value)} placeholder="Habit name" className="w-full bg-[#F7F3EB] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B6B6B]" />
+        <input value={desc} onChange={e => setDesc(e.target.value)} placeholder="Description (optional)" className="w-full bg-[#F7F3EB] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B6B6B]" />
+        <button onClick={add} disabled={!name.trim()} className="w-full bg-[#1B6B6B] text-white rounded-xl py-3 font-semibold text-sm disabled:opacity-50">Add Habit</button>
       </div>
       <div className="space-y-3">
-        {habits.map((h) => (
-          <div key={h.id} className="bg-white rounded-2xl p-4 shadow-sm border border-[#ede8df] flex items-center gap-3">
-            <button onClick={() => toggleHabit(h.id, !h.completedToday)}
-              className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center ${h.completedToday ? 'bg-[#1B6B6B] border-[#1B6B6B]' : 'border-[#ede8df]'}`}>
+        {habits.map(h => (
+          <div key={h.id} className={`bg-white rounded-2xl p-4 shadow-sm border flex items-center gap-3 ${h.completedToday ? 'border-[#1B6B6B] bg-[#1B6B6B]/5' : 'border-[#ede8df]'}`}>
+            <button onClick={() => toggle(h.id, !h.completedToday)} className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center ${h.completedToday ? 'bg-[#1B6B6B] border-[#1B6B6B]' : 'border-[#ede8df]'}`}>
               {h.completedToday && <span className="text-white text-sm">✓</span>}
             </button>
-            <span className={`flex-1 text-sm ${h.completedToday ? 'line-through text-[#4a5e5e]' : 'text-[#1a2a2a]'}`}>{h.name}</span>
-            <button onClick={() => deleteHabit(h.id)} className="text-[#e05555] text-sm">🗑</button>
+            <div className="flex-1">
+              <p className={`text-sm font-medium ${h.completedToday ? 'line-through text-[#4a5e5e]' : 'text-[#1a2a2a]'}`}>{h.name}</p>
+              {h.description && <p className="text-xs text-[#4a5e5e]">{h.description}</p>}
+            </div>
+            <button onClick={() => remove(h.id)} className="text-[#e05555] text-sm">🗑</button>
           </div>
         ))}
       </div>
