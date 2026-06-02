@@ -32,30 +32,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      fetch('/trpc/auth.me', {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data?.result?.data) {
-            setUser(data.result.data);
-          }
-        })
-        .catch(() => localStorage.removeItem('token'))
-        .finally(() => setIsLoading(false));
-    } else {
-      setIsLoading(false);
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      try {
+        setUser(JSON.parse(stored));
+      } catch {}
     }
+    setIsLoading(false);
   }, []);
 
-  const login = () => {
-    window.location.href = '/api/auth/login';
-  };
+  const login = () => {};
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
   };
 
