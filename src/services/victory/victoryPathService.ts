@@ -21,7 +21,7 @@ export const getUserPaths = async (userId: number) => {
 };
 
 export const completePath = async (pathId: number) => {
-  await db.update(victoryPaths).set({ status: "completed", completion_date: new Date() }).where(eq(victoryPaths.id, pathId));
+  await db.update(victoryPaths).set({ status: "completed", completion_date: new Date().toISOString() }).where(eq(victoryPaths.id, pathId));
 };
 
 export const pausePath = async (pathId: number) => {
