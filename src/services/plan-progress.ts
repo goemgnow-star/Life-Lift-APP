@@ -9,8 +9,8 @@ export const updateDailyProgress = async (planId: number, userId: number): Promi
 
   if (!plan) throw new Error("Plan not found or unauthorized.");
 
-  const nextDay = ((plan.current_day ?? 0) ?? 0) + 1;
-  const isComplete = nextDay >= ((plan.duration_days ?? 1) ?? 1);
+  const nextDay = (plan.current_day ?? 0) + 1;
+  const isComplete = nextDay >= (plan.duration_days ?? 1);
 
   await db.update(plans)
     .set({ current_day: nextDay, status: isComplete ? 'completed' : 'active' })
