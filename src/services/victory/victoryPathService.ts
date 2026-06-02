@@ -8,7 +8,7 @@ const DAYS_REQUIRED: Record<VictoryPathType, number> = { "24h": 1, "3d": 3, "7d"
 
 export const startVictoryPath = async (userId: number, pathType: VictoryPathType) => {
   const [row] = await db.insert(victoryPaths).values({
-    user_id: userId, path_type: pathType, start_date: new Date(),
+    user_id: userId, path_type: pathType, start_date: new Date().toISOString(),
   }).returning({ id: victoryPaths.id });
   return { id: row.id, path_type: pathType, status: "active" };
 };
